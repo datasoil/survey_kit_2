@@ -14,8 +14,7 @@ class TimeAnswerFormat extends AnswerFormat {
   const TimeAnswerFormat({
     this.defaultValue,
     super.question,
-    super.answerType = type,
-  }) : super();
+  }) : super(answerType: type);
 
   factory TimeAnswerFormat.fromJson(Map<String, dynamic> json) =>
       _$TimeAnswerFormatFromJson(json);

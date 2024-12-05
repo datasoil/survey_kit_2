@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart' hide Step;
+import 'package:flutter/services.dart';
 import 'package:survey_kit/src/model/answer/double_answer_format.dart';
 import 'package:survey_kit/src/model/result/step_result.dart';
 import 'package:survey_kit/src/model/step.dart';
 import 'package:survey_kit/src/util/measure_date_state_mixin.dart';
 import 'package:survey_kit/src/view/widget/answer/answer_mixin.dart';
 import 'package:survey_kit/src/view/widget/answer/answer_question_text.dart';
-import 'package:survey_kit/src/view/widget/decoration/input_decoration.dart';
 
 class DoubleAnswerView extends StatefulWidget {
   final Step questionStep;
@@ -35,11 +35,18 @@ class _DoubleAnswerViewState extends State<DoubleAnswerView>
     }
     _doubleAnswerFormat = answer as DoubleAnswerFormat;
     _controller = TextEditingController();
-    _controller.text = widget.result?.result?.toString() ?? '';
+    _controller.text = widget.result?.result?.toString() ??
+        _doubleAnswerFormat.defaultValue?.toString() ??
+        '';
+  }
 
-    isValid(
-      double.tryParse(_controller.text),
-    );
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onValidationChanged =
+          isValid(widget.result?.result ?? _doubleAnswerFormat.defaultValue);
+    });
+    super.didChangeDependencies();
   }
 
   @override
@@ -49,9 +56,11 @@ class _DoubleAnswerViewState extends State<DoubleAnswerView>
   }
 
   @override
-  bool isValid(dynamic result) {
-    return !widget.questionStep.isMandatory ||
-        (result != null && double.tryParse(result as String) != null);
+  bool isValid(double? value) {
+    if (value == null && !widget.questionStep.isMandatory) {
+      return true;
+    }
+    return value != null;
   }
 
   @override
@@ -67,19 +76,19 @@ class _DoubleAnswerViewState extends State<DoubleAnswerView>
             width: MediaQuery.of(context).size.width,
             child: TextField(
               autofocus: true,
-              decoration: textFieldInputDecoration(
-                hint: _doubleAnswerFormat.hint,
+              keyboardType: const TextInputType.numberWithOptions(
+                signed: true,
+                decimal: true,
               ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp('[0-9.-]')),
+              ],
+              decoration: InputDecoration(hintText: _doubleAnswerFormat.hint),
               controller: _controller,
               onChanged: (String text) {
                 final number = double.tryParse(text);
-                if (number == null) {
-                  onValidationChanged = false;
-                  return;
-                }
                 onChange(number);
               },
-              keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
             ),
           ),

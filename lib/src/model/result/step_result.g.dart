@@ -24,24 +24,15 @@ StepResult<T> _$StepResultFromJson<T>(
 Map<String, dynamic> _$StepResultToJson<T>(
   StepResult<T> instance,
   Object? Function(T value) toJsonT,
-) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'step': instance.step,
-    'result': _$nullableGenericToJson(instance.result, toJsonT),
-    'startTime': const CustomDateTimeConverter().toJson(instance.startTime),
-    'endTime': const CustomDateTimeConverter().toJson(instance.endTime),
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('valueIdentifier', instance.valueIdentifier);
-  return val;
-}
+) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'step': instance.step,
+      'result': _$nullableGenericToJson(instance.result, toJsonT),
+      'startTime': const CustomDateTimeConverter().toJson(instance.startTime),
+      'endTime': const CustomDateTimeConverter().toJson(instance.endTime),
+      'valueIdentifier': instance.valueIdentifier,
+    };
 
 T? _$nullableGenericFromJson<T>(
   Object? input,

@@ -9,7 +9,7 @@ part 'boolean_answer_format.g.dart';
 
 @JsonSerializable()
 class BooleanAnswerFormat extends AnswerFormat {
-  static const String type = 'bool';
+  static const type = 'bool';
 
   final String positiveAnswer;
   final String negativeAnswer;
@@ -20,8 +20,7 @@ class BooleanAnswerFormat extends AnswerFormat {
     required this.negativeAnswer,
     this.result = BooleanResult.none,
     super.question,
-    super.answerType = type,
-  }) : super();
+  }) : super(answerType: type);
 
   factory BooleanAnswerFormat.fromJson(Map<String, dynamic> json) =>
       _$BooleanAnswerFormatFromJson(json);

@@ -18,8 +18,7 @@ class MultipleChoiceAnswerFormat extends AnswerFormat {
     this.otherField = false,
     this.defaultSelection,
     super.question,
-    super.answerType = type,
-  }) : super();
+  }) : super(answerType: type);
 
   factory MultipleChoiceAnswerFormat.fromJson(Map<String, dynamic> json) =>
       _$MultipleChoiceAnswerFormatFromJson(json);

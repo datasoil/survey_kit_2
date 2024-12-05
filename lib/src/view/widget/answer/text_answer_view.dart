@@ -5,7 +5,6 @@ import 'package:survey_kit/src/model/step.dart';
 import 'package:survey_kit/src/util/measure_date_state_mixin.dart';
 import 'package:survey_kit/src/view/widget/answer/answer_mixin.dart';
 import 'package:survey_kit/src/view/widget/answer/answer_question_text.dart';
-import 'package:survey_kit/src/view/widget/decoration/input_decoration.dart';
 
 class TextAnswerView extends StatefulWidget {
   final Step questionStep;
@@ -72,8 +71,8 @@ class _TextAnswerViewState extends State<TextAnswerView>
           child: TextField(
             textInputAction: TextInputAction.next,
             autofocus: true,
-            decoration: textFieldInputDecoration(
-              hint: _textAnswerFormat.hint,
+            decoration: InputDecoration(
+              hintText: _textAnswerFormat.hint,
             ),
             controller: _controller,
             textAlign: TextAlign.center,

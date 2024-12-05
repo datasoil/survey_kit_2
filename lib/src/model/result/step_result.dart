@@ -14,7 +14,6 @@ class StepResult<T> {
   final T? result;
   final DateTime startTime;
   final DateTime endTime;
-  @JsonKey(includeIfNull: false)
   final String? valueIdentifier;
 
   const StepResult({

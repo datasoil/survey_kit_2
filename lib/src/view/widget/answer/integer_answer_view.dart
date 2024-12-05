@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart' hide Step;
+import 'package:flutter/services.dart';
 import 'package:survey_kit/src/model/answer/integer_answer_format.dart';
 import 'package:survey_kit/src/model/result/step_result.dart';
 import 'package:survey_kit/src/model/step.dart';
 import 'package:survey_kit/src/util/measure_date_state_mixin.dart';
 import 'package:survey_kit/src/view/widget/answer/answer_mixin.dart';
 import 'package:survey_kit/src/view/widget/answer/answer_question_text.dart';
-import 'package:survey_kit/src/view/widget/decoration/input_decoration.dart';
 
 class IntegerAnswerView extends StatefulWidget {
   final Step questionStep;
@@ -35,7 +35,18 @@ class _IntegerAnswerViewState extends State<IntegerAnswerView>
     }
     _integerAnswerFormat = answer as IntegerAnswerFormat;
     _controller = TextEditingController();
-    _controller.text = widget.result?.result?.toString() ?? '';
+    _controller.text = widget.result?.result?.toString() ??
+        _integerAnswerFormat.defaultValue?.toString() ??
+        '';
+  }
+
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onValidationChanged =
+          isValid(widget.result?.result ?? _integerAnswerFormat.defaultValue);
+    });
+    super.didChangeDependencies();
   }
 
   @override
@@ -46,6 +57,9 @@ class _IntegerAnswerViewState extends State<IntegerAnswerView>
 
   @override
   bool isValid(int? value) {
+    if (value == null && !widget.questionStep.isMandatory) {
+      return true;
+    }
     return value != null &&
         value >= _integerAnswerFormat.min &&
         value <= _integerAnswerFormat.max;
@@ -55,34 +69,28 @@ class _IntegerAnswerViewState extends State<IntegerAnswerView>
   Widget build(BuildContext context) {
     final questionText = widget.questionStep.answerFormat?.question;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32.0),
-      child: Column(
-        children: [
-          if (questionText != null) AnswerQuestionText(text: questionText),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              textInputAction: TextInputAction.next,
-              autofocus: true,
-              decoration: textFieldInputDecoration(
-                hint: _integerAnswerFormat.hint,
-              ),
-              controller: _controller,
-              onChanged: (String text) {
-                final number = int.tryParse(text);
-                if (number == null) {
-                  onValidationChanged = false;
-                  return;
-                }
-                onChange(number);
-              },
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-            ),
+    return Column(
+      children: [
+        if (questionText != null) AnswerQuestionText(text: questionText),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: TextField(
+            textInputAction: TextInputAction.next,
+            autofocus: true,
+            keyboardType: const TextInputType.numberWithOptions(signed: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp('[0-9-]')),
+            ],
+            decoration: InputDecoration(hintText: _integerAnswerFormat.hint),
+            controller: _controller,
+            onChanged: (String text) {
+              final number = int.tryParse(text);
+              onChange(number);
+            },
+            textAlign: TextAlign.center,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

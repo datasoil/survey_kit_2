@@ -42,6 +42,14 @@ class _SingleChoiceAnswerViewState extends State<SingleChoiceAnswerView>
   }
 
   @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onValidationChanged = isValid(_selectedChoice);
+    });
+    super.didChangeDependencies();
+  }
+
+  @override
   void onChange(TextChoice? choice) {
     if (_selectedChoice == choice) {
       _selectedChoice = null;
@@ -49,7 +57,7 @@ class _SingleChoiceAnswerViewState extends State<SingleChoiceAnswerView>
       _selectedChoice = choice;
     }
     setState(() {});
-    super.onChange(choice);
+    super.onChange(_selectedChoice);
   }
 
   @override
@@ -69,8 +77,10 @@ class _SingleChoiceAnswerViewState extends State<SingleChoiceAnswerView>
       child: Column(
         children: [
           if (questionText != null) AnswerQuestionText(text: questionText),
+          const SizedBox(height: 16),
           const Divider(
             color: Colors.grey,
+            height: 0,
           ),
           ..._singleChoiceAnswerFormat.textChoices.map(
             (TextChoice tc) {

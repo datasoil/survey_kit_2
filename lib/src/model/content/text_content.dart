@@ -12,11 +12,14 @@ class TextContent extends Content {
   final String text;
   final double fontSize;
   final TextAlign textAlign;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final TextStyle? style;
 
   const TextContent({
     required this.text,
     this.fontSize = 16,
     this.textAlign = TextAlign.center,
+    this.style,
     super.id,
   }) : super(contentType: type);
 

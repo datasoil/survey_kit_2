@@ -36,56 +36,70 @@ class _StepViewState extends State<StepView> {
 
     final questionAnswer = QuestionAnswer.of(context);
 
-    return ColoredBox(
-      color: Theme.of(context).colorScheme.surface,
-      child: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraint) {
-            return Padding(
-              padding: const EdgeInsets.all(30),
-              child: SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints:
-                      BoxConstraints(minHeight: constraint.maxHeight - 60),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: ContentWidget(
-                            content: widget.step.content,
+    return SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraint) {
+          return Container(
+            height: constraint.maxHeight,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraint) {
+                      return SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints:
+                              BoxConstraints(minHeight: constraint.maxHeight),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ...widget.step.content
+                                    .map((c) => c.createWidget()),
+                                if (widget.answerView != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 12),
+                                    child: widget.answerView,
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
-                        if (widget.answerView != null) widget.answerView!,
-                        AnimatedBuilder(
-                          animation: questionAnswer.isValid,
-                          builder: (context, child) {
-                            return OutlinedButton(
-                              onPressed: questionAnswer.isValid.value ||
-                                      !widget.step.isMandatory
-                                  ? () => _surveyController.nextStep(
-                                        context,
-                                        questionAnswer.stepResult,
-                                      )
-                                  : null,
-                              child: Text(
-                                widget.step.buttonText ??
-                                    surveyConfiguration.localizations?['next']
-                                        ?.toUpperCase() ??
-                                    'Next',
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
-              ),
-            );
-          },
-        ),
+
+                //
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable: questionAnswer.isValid,
+                    builder: (context, isValid, child) {
+                      return FilledButton(
+                        onPressed: isValid
+                            ? () => _surveyController.nextStep(
+                                  context,
+                                  questionAnswer.stepResult,
+                                )
+                            : null,
+                        child: Text(
+                          widget.step.buttonText ??
+                              surveyConfiguration.localizations?['next']
+                                  ?.toUpperCase() ??
+                              'Next',
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

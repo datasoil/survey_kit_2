@@ -7,11 +7,11 @@ class ContentWidget extends StatefulWidget {
     super.key,
     required this.content,
     this.center = true,
-    this.padding = const EdgeInsets.all(16),
+    this.withSeparators = true,
   });
   final List<Content> content;
   final bool center;
-  final EdgeInsets padding;
+  final bool withSeparators;
 
   @override
   State<ContentWidget> createState() => _ContentWidgetState();
@@ -20,21 +20,23 @@ class ContentWidget extends StatefulWidget {
 class _ContentWidgetState extends State<ContentWidget> {
   @override
   Widget build(BuildContext context) {
-    final contentView = Container(
-      width: double.infinity,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: widget.content
+    final contentView = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(
+          width: double.infinity,
+        ),
+        ...widget.content
             .map(
               (e) => e.createWidget(),
             )
             .withSeparator(
-              const _Separator(
-                height: 14,
+              _Separator(
+                height: widget.withSeparators ? 14 : 0,
               ),
             )
             .toList(),
-      ),
+      ],
     );
 
     return widget.center ? Center(child: contentView) : contentView;

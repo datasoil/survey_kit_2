@@ -1,24 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'image_content.dart';
+part of 'svg_content.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ImageContent _$ImageContentFromJson(Map<String, dynamic> json) => ImageContent(
+SvgContent _$SvgContentFromJson(Map<String, dynamic> json) => SvgContent(
       id: json['id'] as String?,
-      url: json['url'] as String,
-      fit: $enumDecodeNullable(_$BoxFitEnumMap, json['fit']),
+      assetName: json['assetName'] as String,
+      fit: $enumDecodeNullable(_$BoxFitEnumMap, json['fit']) ?? BoxFit.contain,
       width: (json['width'] as num?)?.toDouble(),
       height: (json['height'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$ImageContentToJson(ImageContent instance) =>
+Map<String, dynamic> _$SvgContentToJson(SvgContent instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'url': instance.url,
-      'fit': _$BoxFitEnumMap[instance.fit],
+      'assetName': instance.assetName,
+      'fit': _$BoxFitEnumMap[instance.fit]!,
       'width': instance.width,
       'height': instance.height,
     };

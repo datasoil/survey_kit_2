@@ -8,7 +8,6 @@ import 'package:survey_kit/src/util/measure_date_state_mixin.dart';
 import 'package:survey_kit/src/view/widget/answer/answer_mixin.dart';
 import 'package:survey_kit/src/view/widget/answer/answer_question_text.dart';
 import 'package:survey_kit/src/view/widget/answer/selection_list_tile.dart';
-import 'package:survey_kit/src/view/widget/question_answer.dart';
 
 class MultipleChoiceAnswerView extends StatefulWidget {
   final Step questionStep;
@@ -29,6 +28,7 @@ class _MultipleChoiceAnswerView extends State<MultipleChoiceAnswerView>
         MeasureDateStateMixin,
         AnswerMixin<MultipleChoiceAnswerView, List<TextChoice>> {
   late final MultipleChoiceAnswerFormat _multipleChoiceAnswer;
+  List<TextChoice>? _selectedChoices;
 
   @override
   void initState() {
@@ -38,6 +38,18 @@ class _MultipleChoiceAnswerView extends State<MultipleChoiceAnswerView>
       throw Exception('MultiSelectAnswer is null');
     }
     _multipleChoiceAnswer = answer as MultipleChoiceAnswerFormat;
+    _selectedChoices = widget.result?.result as List<TextChoice>? ??
+        (_multipleChoiceAnswer.defaultSelection != null
+            ? [_multipleChoiceAnswer.defaultSelection!]
+            : []);
+  }
+
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onValidationChanged = isValid(_selectedChoices);
+    });
+    super.didChangeDependencies();
   }
 
   @override
@@ -49,36 +61,47 @@ class _MultipleChoiceAnswerView extends State<MultipleChoiceAnswerView>
   }
 
   @override
+  void onChange(List<TextChoice>? choices) {
+    super.onChange(choices);
+  }
+
+  void onTapChoice(TextChoice tapped) {
+    if (_selectedChoices != null) {
+      if (_selectedChoices!.contains(tapped)) {
+        _selectedChoices!.remove(tapped);
+      } else {
+        _selectedChoices!.add(tapped);
+      }
+    } else {
+      _selectedChoices = [tapped];
+    }
+    _selectedChoices =
+        _selectedChoices?.isNotEmpty == true ? _selectedChoices : null;
+
+    setState(() {});
+    onChange(_selectedChoices);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final questionText = widget.questionStep.answerFormat?.question;
 
-    final _selectedChoices =
-        QuestionAnswer.of(context).stepResult?.result as List<TextChoice>? ??
-            widget.result?.result as List<TextChoice>? ??
-            [];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14.0),
       child: Column(
         children: [
           if (questionText != null) AnswerQuestionText(text: questionText),
+          const SizedBox(height: 16),
           const Divider(
             color: Colors.grey,
+            height: 0,
           ),
           ..._multipleChoiceAnswer.textChoices
               .map(
                 (TextChoice tc) => SelectionListTile(
                   text: tc.text,
-                  onTap: () {
-                    setState(
-                      () {
-                        if (_selectedChoices.contains(tc)) {
-                          _selectedChoices.remove(tc);
-                        } else {}
-                      },
-                    );
-                    onChange([..._selectedChoices, tc]);
-                  },
-                  isSelected: _selectedChoices.contains(tc),
+                  onTap: () => onTapChoice(tc),
+                  isSelected: _selectedChoices?.contains(tc) ?? false,
                 ),
               )
               .toList(),
@@ -90,7 +113,7 @@ class _MultipleChoiceAnswerView extends State<MultipleChoiceAnswerView>
                   onChanged: (v) {
                     int? currentIndex;
                     final otherTextChoice = _selectedChoices
-                        .firstWhereIndexedOrNull((index, element) {
+                        ?.firstWhereIndexedOrNull((index, element) {
                       final isOtherField = element.value == 'Other';
 
                       if (isOtherField) {
@@ -102,14 +125,14 @@ class _MultipleChoiceAnswerView extends State<MultipleChoiceAnswerView>
 
                     setState(() {
                       if (v.isEmpty && otherTextChoice != null) {
-                        _selectedChoices.remove(otherTextChoice);
+                        _selectedChoices?.remove(otherTextChoice);
                       } else if (v.isNotEmpty) {
                         final updatedTextChoice =
                             TextChoice(id: 'Other', value: v, text: v);
                         if (otherTextChoice == null) {
-                          _selectedChoices.add(updatedTextChoice);
+                          _selectedChoices?.add(updatedTextChoice);
                         } else if (currentIndex != null) {
-                          _selectedChoices[currentIndex!] = updatedTextChoice;
+                          _selectedChoices?[currentIndex!] = updatedTextChoice;
                         }
                       }
                       onChange(_selectedChoices);

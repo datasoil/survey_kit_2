@@ -38,6 +38,15 @@ class _DateAnswerViewState extends State<DateAnswerView>
     _result = widget.result?.result as DateTime? ??
         _dateAnswerFormat.defaultDate ??
         DateTime.now();
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
+  }
+
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onValidationChanged = isValid(_result);
+    });
+    super.didChangeDependencies();
   }
 
   @override
@@ -116,22 +125,29 @@ class _DateAnswerViewState extends State<DateAnswerView>
   }
 
   Widget _iosDatePicker() {
-    return Container(
-      width: double.infinity,
-      height: 300,
-      child: CupertinoDatePicker(
-        mode: CupertinoDatePickerMode.date,
-        minimumDate: _dateAnswerFormat.minDate,
-        //We have to add an hour to to met the assert maxDate > initDate
-        maximumDate: _dateAnswerFormat.maxDate?.add(
-              const Duration(hours: 1),
-            ) ??
-            DateTime.now().add(
-              const Duration(hours: 1),
-            ),
-        initialDateTime: _dateAnswerFormat.defaultDate,
-        onDateTimeChanged: onChange,
-      ),
+    final questionText = widget.questionStep.answerFormat?.question;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (questionText != null) AnswerQuestionText(text: questionText),
+        Container(
+          width: double.infinity,
+          height: 300,
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.date,
+            minimumDate: _dateAnswerFormat.minDate,
+            //We have to add an hour to to met the assert maxDate > initDate
+            maximumDate: _dateAnswerFormat.maxDate?.add(
+                  const Duration(hours: 1),
+                ) ??
+                DateTime.now().add(
+                  const Duration(hours: 1),
+                ),
+            initialDateTime: _dateAnswerFormat.defaultDate,
+            onDateTimeChanged: onChange,
+          ),
+        ),
+      ],
     );
   }
 }

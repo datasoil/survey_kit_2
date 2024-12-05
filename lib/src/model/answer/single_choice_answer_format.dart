@@ -15,8 +15,7 @@ class SingleChoiceAnswerFormat extends AnswerFormat {
     required this.textChoices,
     this.defaultSelection,
     super.question,
-    super.answerType = type,
-  }) : super();
+  }) : super(answerType: type);
 
   factory SingleChoiceAnswerFormat.fromJson(Map<String, dynamic> json) =>
       _$SingleChoiceAnswerFormatFromJson(json);

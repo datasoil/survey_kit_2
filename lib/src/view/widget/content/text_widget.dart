@@ -14,9 +14,10 @@ class TextWidget extends StatelessWidget {
     return Text(
       textContent.text,
       textAlign: textContent.textAlign,
-      style: TextStyle(
-        fontSize: textContent.fontSize,
-      ),
+      style: textContent.style ??
+          TextStyle(
+            fontSize: textContent.fontSize,
+          ),
     );
   }
 }

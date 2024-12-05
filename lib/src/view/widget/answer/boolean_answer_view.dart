@@ -40,6 +40,14 @@ class _BooleanAnswerViewState extends State<BooleanAnswerView>
   }
 
   @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onValidationChanged = isValid(_result);
+    });
+    super.didChangeDependencies();
+  }
+
+  @override
   bool isValid(dynamic result) {
     if (widget.questionStep.isMandatory) {
       return _result != null;

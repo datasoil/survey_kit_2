@@ -1,19 +1,19 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'markdown_content.dart';
+part of 'spacer_content.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-MarkdownContent _$MarkdownContentFromJson(Map<String, dynamic> json) =>
-    MarkdownContent(
-      text: json['text'] as String,
+SpacerContent _$SpacerContentFromJson(Map<String, dynamic> json) =>
+    SpacerContent(
+      height: (json['height'] as num).toDouble(),
       id: json['id'] as String?,
     );
 
-Map<String, dynamic> _$MarkdownContentToJson(MarkdownContent instance) =>
+Map<String, dynamic> _$SpacerContentToJson(SpacerContent instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'text': instance.text,
+      'height': instance.height,
     };

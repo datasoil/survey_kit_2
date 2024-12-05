@@ -18,14 +18,12 @@ MultipleChoiceAnswerFormat _$MultipleChoiceAnswerFormatFromJson(
           : TextChoice.fromJson(
               json['defaultSelection'] as Map<String, dynamic>),
       question: json['question'] as String?,
-      answerType: json['type'] as String?,
     );
 
 Map<String, dynamic> _$MultipleChoiceAnswerFormatToJson(
         MultipleChoiceAnswerFormat instance) =>
     <String, dynamic>{
       'question': instance.question,
-      'type': instance.answerType,
       'textChoices': instance.textChoices,
       'defaultSelection': instance.defaultSelection,
       'otherField': instance.otherField,
