@@ -1,3 +1,4 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Step;
 import 'package:intl/intl.dart';
@@ -35,10 +36,8 @@ class _DateAnswerViewState extends State<DateAnswerView>
   void initState() {
     super.initState();
     _dateAnswerFormat = widget.questionStep.answerFormat! as DateAnswerFormat;
-    _result = widget.result?.result as DateTime? ??
-        _dateAnswerFormat.defaultDate ??
-        DateTime.now();
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    _result =
+        widget.result?.result as DateTime? ?? _dateAnswerFormat.defaultDate;
   }
 
   @override
@@ -57,7 +56,7 @@ class _DateAnswerViewState extends State<DateAnswerView>
   @override
   void onChange(DateTime? result) {
     setState(() {
-      _result = result;
+      _result = result!;
     });
     super.onChange(result);
   }
@@ -94,7 +93,7 @@ class _DateAnswerViewState extends State<DateAnswerView>
                 left: 8.0,
                 bottom: 8.0,
                 child: Text(
-                  _dateFormat.format(_result!),
+                  _dateFormat.format(_result ?? DateTime.now()),
                   style: const TextStyle(
                     fontSize: 28.0,
                     color: Colors.white,
@@ -107,17 +106,29 @@ class _DateAnswerViewState extends State<DateAnswerView>
         Container(
           width: double.infinity,
           height: 300.0,
-          child: CalendarDatePicker(
-            firstDate: _dateAnswerFormat.minDate ?? DateTime.utc(1900),
-            lastDate: _dateAnswerFormat.maxDate?.add(
-                  const Duration(hours: 1),
-                ) ??
-                DateTime.now().add(
-                  const Duration(hours: 1),
-                ),
-            initialDate: _result ?? DateTime.now(),
-            currentDate: _result,
-            onDateChanged: onChange,
+          child: CalendarDatePicker2(
+            config: CalendarDatePicker2Config(
+              firstDate: _dateAnswerFormat.minDate,
+              lastDate: _dateAnswerFormat.maxDate,
+              dayTextStyle: Theme.of(context).textTheme.titleMedium,
+              dynamicCalendarRows: true,
+              daySplashColor: Colors.transparent,
+              selectedDayTextStyle: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: Colors.white),
+              disabledDayTextStyle: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: Colors.grey),
+              todayTextStyle: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: Theme.of(context).colorScheme.primary),
+            ),
+            value: [_result],
+            onValueChanged: (value) => onChange(value.first),
+            onDisplayedMonthChanged: onChange,
           ),
         ),
       ],

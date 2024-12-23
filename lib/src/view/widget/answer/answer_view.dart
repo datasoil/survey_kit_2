@@ -8,8 +8,10 @@ class AnswerView extends StatefulWidget {
     required this.answer,
     required this.step,
     required this.stepResult,
+    required this.backgroundColor,
   });
   final AnswerFormat? answer;
+  final Color? backgroundColor;
 
   final Step step;
   final StepResult? stepResult;
@@ -40,6 +42,7 @@ class _AnswerViewState extends State<AnswerView> {
             : StepView(
                 step: widget.step,
                 answerView: answerView,
+                backgroundColor: widget.backgroundColor,
               ),
       ),
     );

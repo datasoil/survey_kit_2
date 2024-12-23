@@ -13,10 +13,12 @@ class StepView extends StatefulWidget {
   final Step step;
   final Widget? answerView;
   final SurveyController? controller;
+  final Color? backgroundColor;
 
   const StepView({
     super.key,
     required this.step,
+    required this.backgroundColor,
     this.answerView,
     this.controller,
   });
@@ -41,6 +43,8 @@ class _StepViewState extends State<StepView> {
         builder: (context, constraint) {
           return Container(
             height: constraint.maxHeight,
+            color: widget.backgroundColor ??
+                Theme.of(context).scaffoldBackgroundColor,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

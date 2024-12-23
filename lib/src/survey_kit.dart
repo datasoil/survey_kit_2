@@ -50,6 +50,8 @@ class SurveyKit extends StatefulWidget {
   /// Decoration which is applied to the survey container
   final BoxDecoration? decoration;
 
+  final Color? backgroundColor;
+
   const SurveyKit({
     super.key,
     required this.task,
@@ -60,6 +62,7 @@ class SurveyKit extends StatefulWidget {
     this.localizations,
     this.stepShell,
     this.decoration,
+    this.backgroundColor,
   });
 
   @override
@@ -114,6 +117,7 @@ class _SurveyKitState extends State<SurveyKit> {
           appBar: widget.appBar,
           navigatorKey: _navigatorKey,
           decoration: widget.decoration,
+          backgroundColor: widget.backgroundColor,
         ),
       ),
     );
@@ -126,6 +130,7 @@ class SurveyPage extends StatefulWidget {
   final PreferredSizeWidget? appBar;
   final GlobalKey<NavigatorState> navigatorKey;
   final Decoration? decoration;
+  final Color? backgroundColor;
 
   const SurveyPage({
     super.key,
@@ -134,6 +139,7 @@ class SurveyPage extends StatefulWidget {
     required this.navigatorKey,
     this.appBar,
     this.decoration,
+    this.backgroundColor,
   });
 
   @override
@@ -156,6 +162,7 @@ class _SurveyPageState extends State<SurveyPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget.appBar ?? const SurveyAppBar(),
+      backgroundColor: widget.backgroundColor,
       body: Container(
         decoration: widget.decoration,
         child: Navigator(
@@ -184,6 +191,7 @@ class _SurveyPageState extends State<SurveyPage>
                 id: step.id,
                 createView: () => AnswerView(
                   answer: step.answerFormat,
+                  backgroundColor: widget.backgroundColor,
                   step: step,
                   stepResult: currentState.questionResults.firstWhereOrNull(
                     (element) => element.id == step.id,
